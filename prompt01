@@ -1,0 +1,101 @@
+Modify the contents of openai_client.py according to the specification:
+
+Using Python 3.11 and the `requests` Python library, you MUST fully immplement `OpenAIClient.get_nutritional_info(self, image_files)`.
+`OpenAIClient.get_nutritional_info(self, image_files)` MUST return a dictionary, parsed from the response from OpenAI.
+
+You MUST use the model `gpt-4-vision-preview`, upload the files identified by paths in `image_files` and submit the `prompt` to the API.
+The response MUST return as JSON.
+
+You MUST use multiple image upload from the API documentation below:
+
+###
+
+Uploading base 64 encoded images
+If you have an image or set of images locally, you can pass those to the model in base 64 encoded format, here is an example of this in action:
+
+import base64
+import requests
+
+# OpenAI API Key
+api_key = "YOUR_OPENAI_API_KEY"
+
+# Function to encode the image
+def encode_image(image_path):
+  with open(image_path, "rb") as image_file:
+    return base64.b64encode(image_file.read()).decode('utf-8')
+
+# Path to your image
+image_path = "path_to_your_image.jpg"
+
+# Getting the base64 string
+base64_image = encode_image(image_path)
+
+headers = {
+  "Content-Type": "application/json",
+  "Authorization": f"Bearer {api_key}"
+}
+
+payload = {
+  "model": "gpt-4-vision-preview",
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "What’s in this image?"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": f"data:image/jpeg;base64,{base64_image}"
+          }
+        }
+      ]
+    }
+  ],
+  "max_tokens": 300
+}
+
+response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+
+print(response.json())
+Multiple image inputs
+The Chat Completions API is capable of taking in and processing multiple image inputs in both base64 encoded format or as an image URL. The model will process each image and use the information from all of them to answer the question.
+
+Multiple image inputs
+python
+
+python
+from openai import OpenAI
+
+client = OpenAI()
+response = client.chat.completions.create(
+  model="gpt-4-vision-preview",
+  messages=[
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "What are in these images? Is there any difference between them?",
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
+          },
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
+          },
+        },
+      ],
+    }
+  ],
+  max_tokens=300,
+)
+print(response.choices[0])
+Here the model is shown two copies of the same image and can answer questions about both or each of the images independently.

@@ -1,0 +1,70 @@
+# GTPNutriCount Image Analyzer
+
+GPTNutriCount Image Analyzer assists users in counting calories and macronutrients based on photos of their meals and drinks consumed throughout the day.
+
+This command-line tool, given a folder as an argument, recursively iterates through sub-folders searching for folders named Item001, Item002, ... up to Item999. These Item folders contain photos of food items consumed during the day, with each Item folder representing one food item. Supported photo formats include .jpg, .jpeg, .png, .gif, etc.
+
+GPTNutriCount Image Analyzer works on Python 3.11.
+
+You MUST include a README.md file.
+
+The tool creates a file named NutriCountItem.json in each Item folder, provided the folder does not already contain such a file. The NutriCountItem.json file includes the following fields, with estimated values based on the images of the food item:
+{
+    "InformalFoodName": "Apple, Red, Medium Sized",
+    "KiloCaloriesPerItem": 95.0,
+    "WeightGramsPerItem": 200.0,
+    "CarbohydrateGramsPerItem": 25.0,
+    "FiberGramsPerItem": 4.0,
+    "FatGramsPerItem": 0.0,
+    "ProteinGramsPerItem": 0.5,
+    "NumberOfItemConsumed": 1.0
+}
+
+
+The contents of the JSON file are estimated through a request to GPT-4. If an Item folder contains several photos, each photo is uploaded in the same OpenAI API request, with the following prompt:
+
+"You are a nutritionist, tasked with digitalizing nutritional values of a specific food or drink item. The attached image(s) depict(s) one particular food or drink item. Your job is to provide the fields for this item as shown in the examples below.
+You MUST answer in JSON format only.
+The field names MUST be InformalFoodName, KiloCaloriesPerItem, WeightGramsPerItem, CarbohydrateGramsPerItem, FiberGramsPerItem, FatGramsPerItem, ProteinGramsPerItem, and NumberOfItemConsumed.
+If the serving size is known, you MUST assume the consumption, weight, and nutritive value for one serving.
+
+
+### Example of an Apple:
+
+{
+    "InformalFoodName": "Apple, Red, Medium Sized",
+    "KiloCaloriesPerItem": 95.0,
+    "WeightGramsPerItem": 200.0,
+    "CarbohydrateGramsPerItem": 25.0,
+    "FiberGramsPerItem": 4.0,
+    "FatGramsPerItem": 0.0,
+    "ProteinGramsPerItem": 0.5,
+    "NumberOfItemConsumed": 1.0
+}
+
+### Example of a 33 grams Serving:
+
+{
+    "InformalFoodName": "100% Vegan Protein Powder",
+    "KiloCaloriesPerItem": 131.0,
+    "WeightGramsPerItem": 33.0,
+    "CarbohydrateGramsPerItem": 0.6,
+    "FiberGramsPerItem": 0.0,
+    "FatGramsPerItem": 2.6,
+    "ProteinGramsPerItem": 24.0,
+    "NumberOfItemConsumed": 1.0
+}
+
+### Example of Nutritional Values per 100 grams:
+
+{
+    "InformalFoodName": "Almond Milk, Mediterranean",
+    "KiloCaloriesPerItem": 26.0,
+    "WeightGramsPerItem": 100.0,
+    "CarbohydrateGramsPerItem": 0.4,
+    "FiberGramsPerItem": 0.4,
+    "FatGramsPerItem": 1.1,
+    "ProteinGramsPerItem": 0.5,
+    "NumberOfItemConsumed": 1.0
+}
+"
