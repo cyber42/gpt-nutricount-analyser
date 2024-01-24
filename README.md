@@ -1,6 +1,6 @@
 # GTPNutriCount Image Analyzer
 
-[gpt-engineer](https://github.com/gpt-engineer-org/gpt-engineer) generated project, case study, fully operational. gpt-engineer prompts used are in prompt00 and prompt01 files. prompt01 was executed using the `--improve` flag to `gpt-engineer`.
+[gpt-engineer](https://github.com/gpt-engineer-org/gpt-engineer) generated project, case study, fully operational. `gpt-engineer` prompts used are in `prompt00` and `prompt01` files. `prompt01` was executed using the `--improve` flag to `gpt-engineer`.
 
 ## Description
 GTPNutriCount Image Analyzer is a command-line tool that estimates the nutritional values of food items based on photos. It processes images in folders named Item001, Item002, ..., Item999 and generates a JSON file with estimated nutritional information.
