@@ -3,6 +3,7 @@ import os
 import requests
 import base64
 from dotenv import load_dotenv
+import re
 
 load_dotenv()
 
@@ -17,6 +18,9 @@ The field names MUST be InformalFoodName, KiloCaloriesPerItem, WeightGramsPerIte
 If the serving size is known, you MUST assume the consumption, weight, and nutritive value for one serving.
 You MUST avoid comments and your response MUST be a valid JSON object.
 You MUST avoid '```' in your response.
+You MUST avoid '//' in your response.
+You MUST fill in all the fields in the examples below with estimates and avoid unknown values.
+You MUST estimate every value to your best habilities and make sure all values are filled in.
 
 ### Example of an Apple:
 
@@ -101,4 +105,7 @@ class OpenAIClient:
         if message_text.endswith('%'):
             message_text = message_text[:-1]
         print(message_text)
-        return json.loads(message_text)
+        # ChatGPT response may contain a comment at the end of the line. Let's remove this!
+        message_text = re.sub(r'//.*$', '', message_text, flags=re.MULTILINE)
+        result = json.loads(message_text)
+        return result
